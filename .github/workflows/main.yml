@@ -5,8 +5,13 @@ name: CI
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 # Whenever a push is made to the master branch then run the job
-on: push
-
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
 
 jobs:
   # job id, can be anything
