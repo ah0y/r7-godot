@@ -24,12 +24,12 @@ var MOUSE_SENSITIVITY = 0.05
 
 var animation_manager
 
-var current_weapon_name = "UNARMED"
-var weapons = {"UNARMED":null, "KNIFE":null, "PISTOL":null, "RIFLE":null}
-const WEAPON_NUMBER_TO_NAME = {0:"UNARMED", 1:"KNIFE", 2:"PISTOL", 3:"RIFLE"}
-const WEAPON_NAME_TO_NUMBER = {"UNARMED":0, "KNIFE":1, "PISTOL":2, "RIFLE":3}
+var current_weapon_name = "RIFLE"
+var weapons = {"RIFLE":null}
+const WEAPON_NUMBER_TO_NAME = {0:"RIFLE"}
+const WEAPON_NAME_TO_NUMBER = {"RIFLE": 0}
 var changing_weapon = false
-var changing_weapon_name = "UNARMED"
+var changing_weapon_name = "RIFLE"
 
 var health = 100
 const MAX_HEALTH = 150
@@ -67,8 +67,6 @@ func _ready():
 
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
-	weapons["KNIFE"] = $Rotation_Helper/Gun_Fire_Points/Knife_Point
-	weapons["PISTOL"] = $Rotation_Helper/Gun_Fire_Points/Pistol_Point
 	weapons["RIFLE"] = $Rotation_Helper/Gun_Fire_Points/Rifle_Point
 
 	var gun_aim_point_pos = $Rotation_Helper/Gun_Aim_Point.global_transform.origin
@@ -80,8 +78,8 @@ func _ready():
 			weapon_node.look_at(gun_aim_point_pos, Vector3(0, 1, 0))
 			weapon_node.rotate_object_local(Vector3(0, 1, 0), deg2rad(180))
 
-	current_weapon_name = "UNARMED"
-	changing_weapon_name = "UNARMED"
+	current_weapon_name = "RIFLE"
+	changing_weapon_name = "RIFLE"
 
 	UI_status_label = $HUD/Panel/Gun_label
 	flashlight = $Rotation_Helper/Flashlight
@@ -93,7 +91,7 @@ func _physics_process(delta):
 	if !is_dead:
 		process_input(delta)
 		process_movement(delta)
-	#	process_view_input(delta)
+	#	process_view_input(delta) idk why the fuck this is in here
 	
 	if grabbed_object == null:
 		process_changing_weapons(delta)
@@ -238,7 +236,7 @@ func process_input(delta):
 			grenade_clone.global_transform = $Rotation_Helper/Grenade_Toss_Pos.global_transform
 			grenade_clone.apply_impulse(Vector3(0,0,0), grenade_clone.global_transform.basis.z * GRENADE_THROW_FORCE)
 			
-	if Input.is_action_just_pressed("fire_grenade") and current_weapon_name == "UNARMED":
+	if Input.is_action_just_pressed("fire_grenade"):
 		if grabbed_object == null:
 			var state = get_world().direct_space_state
 			
@@ -371,14 +369,10 @@ func fire_bullet():
 	weapons[current_weapon_name].fire_weapon()
 	
 func process_UI(delta):
-	if current_weapon_name == "UNARMED" or current_weapon_name == "KNIFE":
-		UI_status_label.text = "HEALTH: " + str(health) + \
-		"\n" + current_grenade + ": " +  str(grenade_amounts[current_grenade])
-	else:
-		var current_weapon = weapons[current_weapon_name]
-		UI_status_label.text = "HEALTH: " + str(health) + \
-		"\nAMMO " + str(current_weapon.ammo_in_weapon) + "/" + str(current_weapon.spare_ammo) + \
-		"\n" + current_grenade + ": " + str(grenade_amounts[current_grenade])
+	var current_weapon = weapons[current_weapon_name]
+	UI_status_label.text = "HEALTH: " + str(health) + \
+	"\nAMMO " + str(current_weapon.ammo_in_weapon) + "/" + str(current_weapon.spare_ammo) + \
+	"\n" + current_grenade + ": " + str(grenade_amounts[current_grenade])
 		
 func process_reloading(delta):
 	if reloading_weapon == true:
@@ -395,9 +389,8 @@ func add_health(additional_health):
 	health = clamp(health, 0, MAX_HEALTH)
 	
 func add_ammo(additional_ammo):
-	if (current_weapon_name != "UNARMED"):
-		if (weapons[current_weapon_name].CAN_REFILL == true):
-			weapons[current_weapon_name].spare_ammo += weapons[current_weapon_name].AMMO_IN_MAG * additional_ammo 
+	if (weapons[current_weapon_name].CAN_REFILL == true):
+		weapons[current_weapon_name].spare_ammo += weapons[current_weapon_name].AMMO_IN_MAG * additional_ammo 
 			
 func add_grenade(additional_grenades):
 	grenade_amounts[current_grenade] += additional_grenades
@@ -413,7 +406,7 @@ func process_respawn(delta):
 		$Feet_CollisionShape.disabled = true
 		
 		changing_weapon = true 
-		changing_weapon_name = "UNARMED"
+		changing_weapon_name = "RIFLE"
 		
 		$HUD/Death_Screen.visible = true
 		
