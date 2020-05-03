@@ -1,39 +1,31 @@
 extends Spatial
 
-var audio_pistol_shot = preload("res://assets/gun_revolver_pistol_shot_04.wav")
-var audio_gun_cock = preload("res://assets/gun_semi_auto_rifle_cock_02.wav")
-var audio_rifle_shot = preload("res://assets/gun_rifle_sniper_shot_01.wav")
-
 var audio_node = null
+var should_loop = false 
+var globals = null
 
 func _ready():
 	audio_node = $Audio_Stream_Player
 	audio_node.connect("finished", self, "destroy_self")
 	audio_node.stop()
 	
-func play_sound(sound_name, position=null):
+	globals = get_node("/root/Globals")
 	
-	if audio_pistol_shot == null or audio_rifle_shot == null or audio_gun_cock == null:
-		print ("Audio not set!")
+func play_sound(audio_stream, position=null):
+	if audio_stream == null:
+		print("No audio stream passed; cannot play sound")
+		globals.created_audio.remove(globals.created_audio.find(self))
 		queue_free()
 		return
-	if sound_name == "Pistol_shot":
-		audio_node.stream = audio_pistol_shot
-	elif sound_name == "Rifle_shot":
-		audio_node.stream = audio_rifle_shot
-	elif sound_name == "Gun_cock":
-		audio_node.stream = audio_gun_cock
-	else:
-		print ("UNKNOWN STREAM")
-		queue_free()
-		return
-	
-	if audio_node is AudioStreamPlayer3D:
-		if position != null:
-			audio_node.global_transform.origin = position
+		
+	audio_node.stream = audio_stream
 			
-	audio_node.play()
+	audio_node.play(0.0)
 	
-func destroy_self():
-	audio_node.stop()
-	queue_free()
+func sound_finished():
+	if should_loop:
+		audio_node.play(0.0)
+	else:
+		globals.created_audio.remove(globals.created_audio.find(self))
+		audio_node.stop()
+		queue_free()
