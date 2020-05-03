@@ -38,8 +38,6 @@ var UI_status_label
 
 var reloading_weapon = false
 
-var simple_audio_player = preload("res://Simple_Audio_Player.tscn")
-
 var mouse_scroll_value = 0 
 const MOUSE_SENSITIVITY_SCROLL_WHEEL = 0.08
 
@@ -390,10 +388,7 @@ func process_reloading(delta):
 		reloading_weapon = false
 		
 func create_sound(sound_name, position=null):
-	var audio_clone = simple_audio_player.instance()
-	var scene_root = get_tree().root.get_children()[0]
-	scene_root.add_child(audio_clone)
-	audio_clone.play_sound(sound_name, position)
+	globals.play_sound(sound_name, false, position)
 	
 func add_health(additional_health):
 	health += additional_health
