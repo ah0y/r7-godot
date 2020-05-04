@@ -47,7 +47,7 @@ var current_state = null
 var callback_function = null
 
 func _ready():
-	set_animation("Idle_unarmed")
+	set_animation("Rifle_equip")
 	connect("animation_finished", self, "animation_ended")
 
 func set_animation(animation_name):
