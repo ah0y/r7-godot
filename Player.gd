@@ -23,13 +23,19 @@ var rotation_helper
 var MOUSE_SENSITIVITY = 0.05
 
 var animation_manager
+var mesh
 
 var current_weapon_name = "RIFLE"
+var current_weapon_color = "RED"
 var weapons = {"RIFLE":null}
 const WEAPON_NUMBER_TO_NAME = {0:"RIFLE"}
 const WEAPON_NAME_TO_NUMBER = {"RIFLE": 0}
+const WEAPON_NUMBER_TO_COLOR = {0:"RED", 1: "ORANGE", 2: "YELLOW", 3: "GREEN", 4: "BLUE", 5: "INDIGO", 6: "VIOLET"}
+const WEAPON_COLOR_TO_NUMBER = {"RED": 0, "ORANGE": 1, "YELLOW": 2, "GREEN": 3, "BLUE": 4, "INDIGO": 5, "VIOLET": 6}
+const COLOR_TO_HEX = {"RED": "FF0000", "ORANGE": "FF7F00", "YELLOW": "FFFF00", "GREEN": "00FF00", "BLUE": "0000FF", "INDIGO": "2E2B5F", "VIOLET": "8B00FF"}
 var changing_weapon = false
 var changing_weapon_name = "RIFLE"
+var changing_weapon_color = "RED"
 
 var health = 100
 const MAX_HEALTH = 150
@@ -68,6 +74,7 @@ func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 	weapons["RIFLE"] = $Rotation_Helper/Gun_Fire_Points/Rifle_Point
+	mesh = $Rotation_Helper/Model/Armature/Skeleton/GodotBattleBot
 
 	var gun_aim_point_pos = $Rotation_Helper/Gun_Aim_Point.global_transform.origin
 
@@ -80,6 +87,8 @@ func _ready():
 
 	current_weapon_name = "RIFLE"
 	changing_weapon_name = "RIFLE"
+	current_weapon_color = "RED"
+	changing_weapon_color = "RED"
 
 	UI_status_label = $HUD/Panel/Gun_label
 	flashlight = $Rotation_Helper/Flashlight
@@ -159,30 +168,36 @@ func process_input(delta):
 	
 	# ----------------------------------
 	# Changing weapons.
-	var weapon_change_number = WEAPON_NAME_TO_NUMBER[current_weapon_name]
+	var weapon_change_color = WEAPON_COLOR_TO_NUMBER[current_weapon_color]
 	
 	if Input.is_key_pressed(KEY_1):
-		weapon_change_number = 0
+		weapon_change_color = 0
 	if Input.is_key_pressed(KEY_2):
-		weapon_change_number = 1
+		weapon_change_color = 1
 	if Input.is_key_pressed(KEY_3):
-		weapon_change_number = 2
+		weapon_change_color = 2
 	if Input.is_key_pressed(KEY_4):
-		weapon_change_number = 3
+		weapon_change_color = 3
+	if Input.is_key_pressed(KEY_5):
+		weapon_change_color = 4
+	if Input.is_key_pressed(KEY_6):
+		weapon_change_color = 5
+	if Input.is_key_pressed(KEY_7):
+		weapon_change_color = 6
 	
 	if Input.is_action_just_pressed("shift_weapon_positive"):
-		weapon_change_number += 1
+		weapon_change_color += 1
 	if Input.is_action_just_pressed("shift_weapon_negative"):
-		weapon_change_number -= 1
+		weapon_change_color -= 1
 	
-	weapon_change_number = clamp(weapon_change_number, 0, WEAPON_NUMBER_TO_NAME.size()-1)
+	weapon_change_color = clamp(weapon_change_color, 0, WEAPON_NUMBER_TO_COLOR.size()-1)
 	
 	if changing_weapon == false:
 		if reloading_weapon == false:
-			if WEAPON_NUMBER_TO_NAME[weapon_change_number] != current_weapon_name:
-				changing_weapon_name = WEAPON_NUMBER_TO_NAME[weapon_change_number]
+			if WEAPON_NUMBER_TO_COLOR[weapon_change_color] != current_weapon_color:
+				changing_weapon_color= WEAPON_NUMBER_TO_COLOR[weapon_change_color]
 				changing_weapon = true
-				mouse_scroll_value = weapon_change_number
+				mouse_scroll_value = weapon_change_color
 	# ----------------------------------
 	
 	# ----------------------------------
@@ -324,13 +339,16 @@ func process_changing_weapons(delta):
 			else:
 				if weapon_to_equip.is_weapon_enabled == false:
 					weapon_equiped = weapon_to_equip.equip_weapon()
+					var weapon_material = mesh.get_surface_material(2)
+					weapon_material.albedo_color = Color(COLOR_TO_HEX[changing_weapon_color])
+					mesh.set_surface_material(2, weapon_material)
 				else:
 					weapon_equiped = true
 
 			if weapon_equiped == true:
 				changing_weapon = false
 				current_weapon_name = changing_weapon_name
-				changing_weapon_name = ""
+				changing_weapon_name = "RIFLE"
 
 
 func _input(event):
