@@ -4180,6 +4180,9 @@ margin_left = -21.0
 margin_top = -21.0
 margin_right = 21.0
 margin_bottom = 21.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Bottom_IMG" type="TextureRect" parent="HUD/Crosshair"]
 anchor_left = 0.5
