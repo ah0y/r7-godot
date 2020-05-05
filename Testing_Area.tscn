@@ -168,7 +168,7 @@ mesh = SubResource( 4 )
 material/0 = SubResource( 5 )
 
 [node name="Player" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.283066, 1.02632, -0.705568 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.51358, -3.33137, 8.99638 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 7 )

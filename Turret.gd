@@ -36,10 +36,22 @@ var destroyed_timer = 0
 
 var bullet_scene = preload("Bullet_Scene.tscn")
 
+var base_mesh 
+var head_mesh
+
+const COLOR_TO_HEX = {"RED": "FF0000", "ORANGE": "FF7F00", "YELLOW": "FFFF00", "GREEN": "00FF00", "BLUE": "0000FF", "INDIGO": "2E2B5F", "VIOLET": "8B00FF"}
+const COLOR_TO_NUMBER = {"RED": 0, "ORANGE": 1, "YELLOW": 2, "GREEN": 3, "BLUE": 4, "INDIGO": 5, "VIOLET": 6}
+const HEX_TO_COLOR = {"FF0000": "RED", "FF7F00": "ORANGE", "FFFF00": "YELLOW", "00FF00": "GREEN", "0000FF":"BLUE", "2E2B5F": "INDIGO", "8B00FF": "VIOLET"}
+const NUMBER_TO_COLOR = {0:"RED", 1: "ORANGE", 2: "YELLOW", 3: "GREEN", 4: "BLUE", 5: "INDIGO", 6: "VIOLET"}
+
 func _ready():
 	
 	$Vision_Area.connect("body_entered", self, "body_entered_vision")
 	$Vision_Area.connect("body_exited", self, "body_exited_vision")
+	$ColorTimer.connect("timeout", self, "change_color")
+	
+	base_mesh = $Base/Turret_Base
+	head_mesh = $Head/Turret_Head
 	
 	node_turret_head = $Head 
 	node_raycast = $Head/Ray_Cast
@@ -148,3 +160,27 @@ func bullet_hit(damage, bullet_hit_pos):
 		smoke_particiles.emitting = true 
 		destroyed_timer = DESTROYED_TIME
 		
+func change_color():
+	var turret_material = base_mesh.get_surface_material(0)
+	var turret_color = turret_material.albedo_color
+	var current_color = HEX_TO_COLOR[turret_material.albedo_color.to_html(false).to_upper()]
+	var color_number_to_exclude = COLOR_TO_NUMBER[current_color]
+	var possible_colors = [1,2,3,4,5,6]
+	possible_colors.erase(color_number_to_exclude)
+	possible_colors.shuffle()
+	var new_color = possible_colors.pop_front()
+	new_color = NUMBER_TO_COLOR[new_color]
+	turret_material.albedo_color = Color(COLOR_TO_HEX[new_color])
+	base_mesh.set_surface_material(0, turret_material)
+	base_mesh.set_surface_material(1, turret_material)
+	base_mesh.set_surface_material(2, turret_material)
+	base_mesh.set_surface_material(3, turret_material)
+
+
+	var head_material = head_mesh.get_surface_material(0)
+	var head_color = head_material.albedo_color
+	head_material.albedo_color = Color(COLOR_TO_HEX[new_color])
+	head_mesh.set_surface_material(0, head_material)
+	head_mesh.set_surface_material(1, head_material)
+	head_mesh.set_surface_material(2, head_material)
+	head_mesh.set_surface_material(3, head_material)		

@@ -370,13 +370,13 @@ func _input(event):
 			elif event.button_index == BUTTON_WHEEL_DOWN:
 				mouse_scroll_value -= MOUSE_SENSITIVITY_SCROLL_WHEEL
 				
-			mouse_scroll_value = clamp(mouse_scroll_value, 0, WEAPON_NUMBER_TO_NAME.size() - 1)
+			mouse_scroll_value = clamp(mouse_scroll_value, 0, WEAPON_NUMBER_TO_COLOR.size() - 1)
 			
 			if changing_weapon == false:
 				if reloading_weapon == false:
 					var round_mouse_scroll_value = int(round(mouse_scroll_value))
-					if WEAPON_NUMBER_TO_NAME[round_mouse_scroll_value] != current_weapon_name:
-						changing_weapon_name = WEAPON_NUMBER_TO_NAME[round_mouse_scroll_value]
+					if WEAPON_NUMBER_TO_COLOR[round_mouse_scroll_value] != current_weapon_name:
+						changing_weapon_name = WEAPON_NUMBER_TO_COLOR[round_mouse_scroll_value]
 						changing_weapon = true
 						mouse_scroll_value = round_mouse_scroll_value
 
