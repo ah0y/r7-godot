@@ -16,7 +16,7 @@ _global_script_class_icons={
 [application]
 
 config/name="Godot FPS"
-run/main_scene="res://Main_Menu.tscn"
+run/main_scene="res://assets/Ruin_Level_Objects/Ruins_Level.tscn"
 config/icon="res://FPS_project_icon.png"
 
 [autoload]
